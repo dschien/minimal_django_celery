@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 
 from amqp_client import tasks
-from amqp_client.controller import IODICUS_AMQP_Controller
+from amqp_client.controller import AMQP_Controller
 
 __author__ = 'schien'
 
@@ -19,7 +19,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        print(settings.IODICUS_MESSAGING_HOST)
-        # IODICUS_AMQP_Controller().send_msg(json.dumps("test"))
+        print(settings.MESSAGING_HOST)
+        # AMQP_Controller().send_msg(json.dumps("test"))
 
         tasks.send_msg.delay(json.dumps("test"))

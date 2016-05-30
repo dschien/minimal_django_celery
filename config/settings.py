@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'INSERT KEY HERE'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -118,13 +118,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# ----------- IODICUS_MESSAGING -------------
-IODICUS_MESSAGING_HOST = 'INSERT HOST HERE'
-IODICUS_MESSAGING_PORT = 5671
-IODICUS_MESSAGING_USER = 'INSERT UN HERE'
-IODICUS_MESSAGING_EXCHANGE_NAME = 'INSERT NAME HERE'
-IODICUS_MESSAGING_SSL = True
-IODICUS_MESSAGING_PASSWORD = '@todo INSERT KEY HERE'
+
 
 
 # ----------- CELERY -------------
@@ -144,3 +138,5 @@ if not BROKER_URL:
         password=os.environ.get('RABBIT_ENV_RABBITMQ_PASS', 'guest'),
         hostname=RABBIT_HOSTNAME,
         vhost=os.environ.get('RABBIT_ENV_VHOST', ''))
+
+from local_settings import *

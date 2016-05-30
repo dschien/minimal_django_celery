@@ -12,41 +12,41 @@ logger = logging.getLogger(__name__)
 
 class ErrorLoggingTask(Task):
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        logger.error("CollectPrefectTask failed: %s" % einfo)
+        logger.error("Task failed: %s" % einfo)
 
 
-class IODICUS_AMQP_Task(Task):
+class AMQP_Task(Task):
     abstract = True
     _channel = None
     _connection = None
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        logger.error("IODICUS_AMQP_Task failed")
+        logger.error("AMQP_Task failed")
         logger.error(einfo)
 
     @property
     def channel(self):
         if self._channel is None:
-            self._connection = amqpstorm.Connection(settings.IODICUS_MESSAGING_HOST,
-                                                    settings.IODICUS_MESSAGING_USER,
-                                                    settings.IODICUS_MESSAGING_PASSWORD,
-                                                    port=settings.IODICUS_MESSAGING_PORT,
-                                                    ssl=settings.IODICUS_MESSAGING_SSL)
+            self._connection = amqpstorm.Connection(settings.MESSAGING_HOST,
+                                                    settings.MESSAGING_USER,
+                                                    settings.MESSAGING_PASSWORD,
+                                                    port=settings.MESSAGING_PORT,
+                                                    ssl=settings.MESSAGING_SSL)
 
             self._channel = self._connection.channel()
 
-            self._channel.exchange.declare(exchange=settings.IODICUS_MESSAGING_EXCHANGE_NAME, exchange_type='fanout')
+            self._channel.exchange.declare(exchange=settings.MESSAGING_EXCHANGE_NAME, exchange_type='fanout')
         return self._channel
 
 
-@shared_task(base=IODICUS_AMQP_Task, bind=True)
+@shared_task(base=AMQP_Task, bind=True)
 def send_msg(self, json_payload):
     logger.debug('Publishing new message %s' % json_payload)
     print('sending')
     self.channel.basic.publish(body=json_payload,
                                # body
                                routing_key='',  # routing key
-                               exchange=settings.IODICUS_MESSAGING_EXCHANGE_NAME,
+                               exchange=settings.MESSAGING_EXCHANGE_NAME,
                                properties={
                                    'delivery_mode': 2,  # make message persistent
                                    'content_type': 'application/json',
